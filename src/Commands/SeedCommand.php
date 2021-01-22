@@ -61,8 +61,12 @@ class SeedCommand extends Command
 
         list($command, $seeders) = [$this, $this->seeders()];
 
-        $seeders->push($this->input->getOption('class'));
-
+        $classInput = $this->input->getOption('class');
+        if ('Database\Seeders\DatabaseSeeder' == $classInput) {
+            $seeders->push($this->input->getOption('class'));
+        } else {
+            $seeders = collect([$this->input->getOption('class')]);
+        }
         $seeders->each(function ($seeder) use ($command) {
             Model::unguarded(function () use ($seeder) {
                 $this->getSeeder($seeder)->__invoke();
